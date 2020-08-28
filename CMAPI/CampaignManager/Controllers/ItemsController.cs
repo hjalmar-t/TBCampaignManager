@@ -6,9 +6,11 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using CampaignManager.Models;
+using Microsoft.AspNetCore.Cors;
 
 namespace CampaignManager.Controllers
 {
+    [EnableCors("AllowMyOrigin")]
     [Route("api/[controller]")]
     [ApiController]
     public class ItemsController : ControllerBase
@@ -21,23 +23,36 @@ namespace CampaignManager.Controllers
         }
 
         // GET: api/Items
-        [HttpGet]
+        [HttpGet("{id}")]
         public async Task<ActionResult<IEnumerable<Item>>> GetItemsByOwner(int id)
         {
-            IList<Item> items = null;
+            //IList<Item> items = null;
 
-            using(var ctx = new TabletopCampaignDBContext())
-            {
-                items = ctx.Item
-                    .FromSqlRaw("SELECT Item.name FROM Item INNER JOIN OwnedItem ON OwnedItem.ItemID = Item.ItemID WHERE OwnedItem.InventoryID = {0}", id)
-                    .ToList<Item>();
-            }
+            //var ctx = new TabletopCampaignDBContext();
+            //items = ctx.Item
+            //    .FromSqlRaw("SELECT * FROM Item INNER JOIN OwnedItem ON OwnedItem.ItemID = Item.ItemID WHERE OwnedItem.InventoryID = {0}", id)
+            //    .ToList<Item>();
 
-            if(items.Count == 0)
+            IEnumerable<Item> itemQuery;
+            var ctx = new TabletopCampaignDBContext();
+
+            itemQuery =
+                from item in ctx.Item
+                join owned in ctx.OwnedItem on item.ItemId equals owned.ItemId
+                where owned.InventoryId == id
+                select item;
+
+            //if (items.Count == 0)
+            //{
+            //    return NotFound();
+            //}
+            //return Ok(items);
+
+            if (itemQuery == null || !itemQuery.Any())
             {
                 return NotFound();
             }
-            return Ok(items);
+            return Ok(itemQuery.ToList());
         }
 
         private bool ItemExists(int id)

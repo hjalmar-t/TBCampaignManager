@@ -2,11 +2,11 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 import * as serviceWorker from './serviceWorker';
-import InventoryManager from './_JS/InventoryManager.js';
+import Inventory from './_JS/Inventory.js';
 
 ReactDOM.render(
   <React.StrictMode>
-    <InventoryManager />
+    <Inventory />
   </React.StrictMode>,
   document.getElementById('root')
 );

@@ -1,46 +1,56 @@
 import React from 'react';
-import CharacterSelection from './CharacterSelection.js';
+import './../_CSS/PageLayout.css';
 
 class InventoryManager extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {
-      characters: [],
-      selection: {}
-    };
 
-    this.selectCharacter = this.selectCharacter.bind(this);
+    // this.state = {
+    //   inventory: []
+    // };
   }
 
-  componentDidMount() {
-    fetch('https://localhost:44349/api/characters')
-      .then(response => response.json())
-      .then(data => this.setState({characters: data}))
-  }
+  // componentDidMount() {
+  //   // character = this.props.character;
+  //   // if (character == null) return null;
 
-  async selectCharacter(character) {
-    await this.setState({selection: character});
-    console.log("Selected character: " + this.state.selection.name + " | Inventory ID: " + this.state.selection.inventoryId);
-  }
+  //   var route = 'https://localhost:44349/api/items/' + this.props.character.inventoryid;
+
+  //   fetch(route)
+  //     .then(response => response.json())
+  //     .then(data => this.setState({inventory: data}))
+  // }
 
   render() {
-    if(!this.state.characters[0]) return null;
-    //var guys = this.state.characters;
+    //const character = this.props.character;
+    const inventory = this.props.inventory;
+    if(!inventory[0]) return null;
 
-    // const playerCharacters = guys.map(chars =>
-    //   <div>
-    //     <button key={chars.CharacterId} onClick={(e) => this.selectCharacter(chars.name)}>{chars.name}, {chars.class}</button>
-    //     <br />
-    //   </div>
-    // )
+    const inventoryListing = inventory.map(item =>
+      <td key={item.ItemID}> {item.name} </td>
+    );
+
+    const weightListing = inventory.map(item =>
+      <td key={item.ItemID}> {item.weight} </td>
+    );
+
+    // const countListing = inventory.map(item =>
+
+    // );
 
     return (
-      <CharacterSelection characters={this.state.characters} onSelection={this.selectCharacter}/>
-      // InventoryRenderer
-      /* 
-      1. Find all owned items that match selection.InventoryID
-      2. Find items that match owned item ID
-      */
+      <div className="Wrapper">
+        <table>
+          <tr>
+            <th>Name</th>
+            {inventoryListing}
+          </tr>
+          <tr>
+            <th>Weight</th>
+            {weightListing}
+          </tr>
+        </table>
+      </div>
     );
   }
 }

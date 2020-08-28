@@ -19,7 +19,7 @@ class CharacterSelection extends React.Component {
     )
 
     return (
-      <div>
+      <div className="Wrapper">
         {characterListing}
       </div>
     );
