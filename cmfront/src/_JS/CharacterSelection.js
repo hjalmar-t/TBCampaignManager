@@ -14,10 +14,13 @@ class CharacterSelection extends React.Component {
 
   render() {
     const characters = this.props.characters;
+
+
     const characterListing = characters.map(char =>
-      <button key={char.CharacterId} onClick={(e) => this.handleSelection(char)}>{char.name}, {char.class}</button>
+      <button key={char.characterId} onClick={(e) => this.handleSelection(char)}>{char.name}, {char.class}</button>
     )
 
+      console.log("char render");
     return (
       <div className="Wrapper">
         {characterListing}

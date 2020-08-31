@@ -18,6 +18,7 @@ class Inventory extends React.Component {
   }
 
   componentDidMount() {
+    // get a list of all characters from the database
     fetch(API + CHAR_QUERY)
       .then(response => response.json())
       .then(data => this.setState({characters: data}))
@@ -25,7 +26,7 @@ class Inventory extends React.Component {
 
   async selectCharacter(character) {
     console.log("Selected character: " + character.name + " | Inventory ID: " + character.inventoryId);
-
+    // get a list of specific items from the database
     fetch(API + INV_QUERY + character.inventoryId)
       .then(response => response.json())
       .then(data => this.setState({inventory: data}))
@@ -36,6 +37,8 @@ class Inventory extends React.Component {
 
     return (
       <div className="Wrapper">
+        <h1>Tabletop Campaign Manager</h1>
+
         <CharacterSelection characters={this.state.characters} onSelection={this.selectCharacter}/>
         <InventoryManager inventory={this.state.inventory} />
       </div>

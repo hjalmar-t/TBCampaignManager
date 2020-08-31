@@ -26,17 +26,15 @@ class InventoryManager extends React.Component {
     const inventory = this.props.inventory;
     if(!inventory[0]) return null;
 
+    // counting algorithm goes here
+
+    // map out item attributes (names, weights) into separate elements
     const inventoryListing = inventory.map(item =>
-      <td key={item.ItemID}> {item.name} </td>
+      <td key={item.itemId+"i"}> {item.name} </td>
     );
-
     const weightListing = inventory.map(item =>
-      <td key={item.ItemID}> {item.weight} </td>
+      <td key={item.itemId+"w"}> {item.weight} </td>
     );
-
-    // const countListing = inventory.map(item =>
-
-    // );
 
     return (
       <div className="Wrapper">
