@@ -27,6 +27,39 @@ class InventoryManager extends React.Component {
     if(!inventory[0]) return null;
 
     // counting algorithm goes here
+    //console.log("test: " + inventory.length);
+    // go through the selected inventory
+      // for each member, count matching members from following members
+
+    /*let deleteList = [];
+    let countList = [];
+
+    for(let i = 0; i < inventory.length; i++) {
+      if(deleteList[i]) continue;
+
+      let current = inventory[i];
+      let count = 1;
+      deleteList[i] = false;
+
+      for(let j = i + 1; j < inventory.length; j++) {
+        console.log("breakpoint: " + i + " and " + j);
+        let next = inventory[j];
+        if(current.itemId === next.itemId) {
+          console.log("duplicate found");
+          deleteList[j] = true;
+          count++;
+        }
+      }
+
+      countList[i] = count;
+      //if(current.name === "Rations") console.log("Rations count: " + count);
+    }
+
+    for (let i = inventory.length-1; i >= 0; i--) {
+      if(deleteList[i]) delete inventory[i];
+    }
+    
+    console.log("test: " + countList);*/
 
     // map out item attributes (names, weights) into separate elements
     const inventoryListing = inventory.map(item =>
@@ -35,18 +68,32 @@ class InventoryManager extends React.Component {
     const weightListing = inventory.map(item =>
       <td key={item.itemId+"w"}> {item.weight} </td>
     );
+    // const countListing = countList.map((num, index) =>
+    //   <td key={index}> {num} </td>
+    // );
 
     return (
       <div className="Wrapper">
+        <p></p>
+
+
         <table>
-          <tr>
-            <th>Name</th>
-            {inventoryListing}
-          </tr>
-          <tr>
-            <th>Weight</th>
-            {weightListing}
-          </tr>
+          <tbody>
+            <tr>
+              <th>Name</th>
+              {inventoryListing}
+            </tr>
+
+            <tr>
+              <th>Weight</th>
+              {weightListing}
+            </tr>
+
+            {/* <tr>
+              <th>Amount</th>
+              {countListing}
+            </tr> */}
+          </tbody>
         </table>
       </div>
     );

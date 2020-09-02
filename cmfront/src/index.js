@@ -8,6 +8,7 @@ ReactDOM.render(
   <React.StrictMode>
     <Inventory />
   </React.StrictMode>,
+  //,
   document.getElementById('root')
 );
 
