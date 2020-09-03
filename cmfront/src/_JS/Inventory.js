@@ -4,14 +4,16 @@ import InventoryManager from './InventoryManager.js';
 
 const API = 'https://localhost:44349/api/';
 const CHAR_QUERY = 'characters/';
-const INV_QUERY = 'items/';
+const INV_QUERY = 'items/ownedBy/';
+const OWN_QUERY = 'items/owned/ownedBy/'
 
 class Inventory extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       characters: [],
-      inventory: []
+      inventory: [],
+      ownedItems: []
     };
 
     this.selectCharacter = this.selectCharacter.bind(this);
@@ -30,6 +32,10 @@ class Inventory extends React.Component {
     fetch(API + INV_QUERY + character.inventoryId)
       .then(response => response.json())
       .then(data => this.setState({inventory: data}))
+
+      // fetch(API + OWN_QUERY + character.inventoryId)
+      // .then(response => response.json())
+      // .then(data => this.setState({ownedItems: data}))
   }
 
   render() {

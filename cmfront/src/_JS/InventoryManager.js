@@ -1,98 +1,73 @@
 import React from 'react';
 import './../_CSS/PageLayout.css';
+import InventoryRow from './InventoryRow';
 
 class InventoryManager extends React.Component {
   constructor(props) {
     super(props);
 
-    // this.state = {
-    //   inventory: []
-    // };
+    this.state = {
+      inventory: [],
+      count: []
+    };
   }
 
-  // componentDidMount() {
-  //   // character = this.props.character;
-  //   // if (character == null) return null;
-
-  //   var route = 'https://localhost:44349/api/items/' + this.props.character.inventoryid;
-
-  //   fetch(route)
-  //     .then(response => response.json())
-  //     .then(data => this.setState({inventory: data}))
-  // }
-
-  render() {
-    //const character = this.props.character;
-    const inventory = this.props.inventory;
-    if(!inventory[0]) return null;
-
-    // counting algorithm goes here
-    //console.log("test: " + inventory.length);
-    // go through the selected inventory
-      // for each member, count matching members from following members
-
-    /*let deleteList = [];
+  static getDerivedStateFromProps(props, state) {
+    let inventory = props.inventory;
+    let deleteList = [];
     let countList = [];
 
-    for(let i = 0; i < inventory.length; i++) {
-      if(deleteList[i]) continue;
+    // for(let i = 0; i < inventory.length; i++) {
+    //   //if(deleteList[i]) continue;
 
-      let current = inventory[i];
-      let count = 1;
-      deleteList[i] = false;
+    //   let current = inventory[i];
+    //   let count = 1;
+    //   deleteList[i] = false;
 
-      for(let j = i + 1; j < inventory.length; j++) {
-        console.log("breakpoint: " + i + " and " + j);
-        let next = inventory[j];
-        if(current.itemId === next.itemId) {
-          console.log("duplicate found");
-          deleteList[j] = true;
-          count++;
-        }
-      }
+    //   for(let j = i + 1; j < inventory.length; j++) {
+    //     console.log("breakpoint: " + i + " and " + j);
+    //     let next = inventory[j];
+    //     if(current.itemId === next.itemId) {
+    //       console.log("duplicate found");
+    //       deleteList[j] = true;
+    //       count++;
+    //     }
+    //   }
 
-      countList[i] = count;
-      //if(current.name === "Rations") console.log("Rations count: " + count);
-    }
+    //   countList[i] = count;
+    // }
 
-    for (let i = inventory.length-1; i >= 0; i--) {
-      if(deleteList[i]) delete inventory[i];
-    }
-    
-    console.log("test: " + countList);*/
+    // for (let i = inventory.length-1; i >= 0; i--) {
+    //   if(deleteList[i]) delete inventory[i];
+    // }
 
-    // map out item attributes (names, weights) into separate elements
-    const inventoryListing = inventory.map(item =>
-      <td key={item.itemId+"i"}> {item.name} </td>
+    return {inventory: inventory, count: countList};
+  }
+
+  render() {
+    const inventory = this.state.inventory;
+    const countList = this.state.count;
+    if(!inventory[0]) return null;
+
+    console.log(countList);
+    const tableData = inventory.map(item =>
+      <InventoryRow key={item.ownedItemId+"rlist"} item={item} />
     );
-    const weightListing = inventory.map(item =>
-      <td key={item.itemId+"w"}> {item.weight} </td>
-    );
-    // const countListing = countList.map((num, index) =>
-    //   <td key={index}> {num} </td>
+
+    // const tableData = compositionArray.map((array, i) =>
+    //   <InventoryRow key={array.inventory[i].itemId+"rlist"} item={array.inventory[i]} count={array.countList[i]} />
     // );
 
     return (
       <div className="Wrapper">
-        <p></p>
-
-
         <table>
           <tbody>
-            <tr>
-              <th>Name</th>
-              {inventoryListing}
+            <tr key={"trh"}>
+              <th key={"th1"}>Name</th>
+              <th key={"th2"}>Weight</th>
+              <th key={"th3"}>Number</th>
             </tr>
-
-            <tr>
-              <th>Weight</th>
-              {weightListing}
-            </tr>
-
-            {/* <tr>
-              <th>Amount</th>
-              {countListing}
-            </tr> */}
+            {tableData}
           </tbody>
         </table>
       </div>
