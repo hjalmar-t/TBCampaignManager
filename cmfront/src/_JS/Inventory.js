@@ -1,22 +1,25 @@
 import React from 'react';
 import CharacterSelection from './CharacterSelection.js';
 import InventoryManager from './InventoryManager.js';
+import ItemInserter from './ItemInserter.js';
 
 const API = 'https://localhost:44349/api/';
 const CHAR_QUERY = 'characters/';
+const ITEM_QUERY = 'items/';
 const INV_QUERY = 'items/ownedBy/';
-const OWN_QUERY = 'items/owned/ownedBy/'
 
 class Inventory extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       characters: [],
+      items: [],
       inventory: [],
-      ownedItems: []
+      inventoryId: null
     };
 
     this.selectCharacter = this.selectCharacter.bind(this);
+    this.reload = this.reload.bind(this);
   }
 
   componentDidMount() {
@@ -24,18 +27,24 @@ class Inventory extends React.Component {
     fetch(API + CHAR_QUERY)
       .then(response => response.json())
       .then(data => this.setState({characters: data}))
+    // get a list of all items from the database
+      fetch(API + ITEM_QUERY)
+      .then(response => response.json())
+      .then(data => this.setState({items: data}))
   }
 
   async selectCharacter(character) {
     console.log("Selected character: " + character.name + " | Inventory ID: " + character.inventoryId);
+    this.setState({inventoryId: character.inventoryId});
     // get a list of specific items from the database
     fetch(API + INV_QUERY + character.inventoryId)
       .then(response => response.json())
       .then(data => this.setState({inventory: data}))
+  }
 
-      // fetch(API + OWN_QUERY + character.inventoryId)
-      // .then(response => response.json())
-      // .then(data => this.setState({ownedItems: data}))
+  reload() {
+    console.log("rerendered root")
+    this.forceUpdate();
   }
 
   render() {
@@ -46,7 +55,8 @@ class Inventory extends React.Component {
         <h1>Tabletop Campaign Manager</h1>
 
         <CharacterSelection characters={this.state.characters} onSelection={this.selectCharacter}/>
-        <InventoryManager inventory={this.state.inventory} />
+        <InventoryManager inventory={this.state.inventory} inventoryId={this.state.inventoryId} />
+        <ItemInserter items={this.state.items} inventoryId={this.state.inventoryId} API={API} onUpdate={this.reload} />
       </div>
       // InventoryRenderer
       /* 

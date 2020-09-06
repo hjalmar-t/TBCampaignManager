@@ -1,6 +1,7 @@
 import React from 'react';
 import './../_CSS/PageLayout.css';
-import InventoryRow from './InventoryRow';
+import ItemRow from './ItemRow';
+import ItemInserter from './ItemInserter';
 
 class InventoryManager extends React.Component {
   constructor(props) {
@@ -8,6 +9,7 @@ class InventoryManager extends React.Component {
 
     this.state = {
       inventory: [],
+      inventoryId: null,
       count: []
     };
   }
@@ -41,7 +43,7 @@ class InventoryManager extends React.Component {
     //   if(deleteList[i]) delete inventory[i];
     // }
 
-    return {inventory: inventory, count: countList};
+    return {inventory: inventory, inventoryId: props.inventoryId, count: countList};
   }
 
   render() {
@@ -49,14 +51,9 @@ class InventoryManager extends React.Component {
     const countList = this.state.count;
     if(!inventory[0]) return null;
 
-    console.log(countList);
     const tableData = inventory.map(item =>
-      <InventoryRow key={item.ownedItemId+"rlist"} item={item} />
+      <ItemRow key={item.ownedItemId+"rlist"} item={item} owned={true} />
     );
-
-    // const tableData = compositionArray.map((array, i) =>
-    //   <InventoryRow key={array.inventory[i].itemId+"rlist"} item={array.inventory[i]} count={array.countList[i]} />
-    // );
 
     return (
       <div className="Wrapper">
@@ -65,7 +62,7 @@ class InventoryManager extends React.Component {
             <tr key={"trh"}>
               <th key={"th1"}>Name</th>
               <th key={"th2"}>Weight</th>
-              <th key={"th3"}>Number</th>
+              {/* <th key={"th3"}>Number</th> */}
             </tr>
             {tableData}
           </tbody>

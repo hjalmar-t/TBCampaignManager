@@ -23,6 +23,29 @@ namespace CampaignManager.Controllers
         }
 
         [EnableCors("AllowMyOrigin")]
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<Item>>> GetAllItems()
+        {
+            return await _context.Item.ToListAsync();
+        }
+
+
+        [EnableCors("AllowMyOrigin")]
+        [Route("owned/{id}")]
+        [HttpGet("{id}")]
+        public async Task<ActionResult<OwnedItem>> GetOwnedItem(int id)
+        {
+            var item = await _context.OwnedItem.FindAsync(id);
+
+            if (item == null)
+            {
+                return NotFound();
+            }
+
+            return item;
+        }
+
+        [EnableCors("AllowMyOrigin")]
         [Route("ownedBy/{id}")]
         [HttpGet("{id}")]
         public async Task<ActionResult<IEnumerable<Item>>> GetItemsByOwner(int id)
@@ -30,11 +53,30 @@ namespace CampaignManager.Controllers
             //IEnumerable<Item> itemQuery;
             var ctx = new TabletopCampaignDBContext();
 
+            var countQuery =
+                from owned in ctx.OwnedItem
+                group owned by owned.ItemId into g
+                select new { ItemId = g.Key, Count = g.Count() };
+
+            //var itemQuery =
+            //        from item in ctx.Item
+            //        join owned in ctx.OwnedItem on item.ItemId equals owned.ItemId
+            //        where owned.InventoryId == id
+            //        select new { OwnedItemId = owned.OwnedItemId, ItemId = item.ItemId, InventoryId = owned.InventoryId, Name = item.Name, Weight = item.Weight };
+
             var itemQuery =
-                    from item in ctx.Item
-                    join owned in ctx.OwnedItem on item.ItemId equals owned.ItemId
-                    where owned.InventoryId == id
-                    select new { OwnedItemId = owned.OwnedItemId, ItemId = item.ItemId, InventoryId = owned.InventoryId, Name = item.Name, Weight = item.Weight };
+                from count in countQuery.ToList()
+                join owned in ctx.OwnedItem on count.ItemId equals owned.ItemId
+                join item in ctx.Item on count.ItemId equals item.ItemId
+                where owned.InventoryId == id
+                //group count by owned.OwnedItemId into g
+                //orderby g.Key
+                //select g;
+                select new { owned.OwnedItemId, item.ItemId, item.Name, item.Weight, count.Count };
+
+            //var itemQuery =
+            //    from item in dupQuery.ToList()
+            //    select item;
 
             //SELECT COUNT(OwnedItem.ItemID) AS number, MIN(OwnedItem.OwnedItemID) AS firstOwned FROM OwnedItem
             //WHERE OwnedItem.InventoryID = @keyInventory
@@ -68,24 +110,42 @@ namespace CampaignManager.Controllers
         }
 
         [EnableCors("AllowMyOrigin")]
-        [Route("owned/ownedBy/{id}")]
-        [HttpGet("{id}")]
-        public async Task<ActionResult<IEnumerable<OwnedItem>>> GetOwnedItemsByInventoryId(int id)
+        [Route("owned/")]
+        [HttpPost]
+        public async Task<ActionResult<OwnedItem>> PostOwnedItem(OwnedItem item)
         {
+            _context.OwnedItem.Add(item);
+            await _context.SaveChangesAsync();
 
-            IEnumerable<OwnedItem> itemQuery;
-            var ctx = new TabletopCampaignDBContext();
+            return CreatedAtAction("GetOwnedItem", new { id = item.OwnedItemId }, item);
 
-            itemQuery =
-                from item in ctx.OwnedItem
-                where item.InventoryId == id
-                select item;
+            return BadRequest("testing post: " + item.ItemId);
 
-            if (itemQuery == null || !itemQuery.Any())
+            //var itemQuery =
+            //    from 
+
+            //return null;
+            //_context.Character.Add(character);
+            //await _context.SaveChangesAsync();
+
+            //return CreatedAtAction("GetCharacter", new { id = character.CharacterId }, character);
+        }
+
+        [EnableCors("AllowMyOrigin")]
+        [Route("owned/delete/{id}")]
+        [HttpDelete("{id}")]
+        public async Task<ActionResult<OwnedItem>> DeleteOwnedItem(int id)
+        {
+            var item = await _context.OwnedItem.FindAsync(id);
+            if (item == null)
             {
                 return NotFound();
             }
-            return Ok(itemQuery.ToList());
+
+            _context.OwnedItem.Remove(item);
+            await _context.SaveChangesAsync();
+
+            return item;
         }
 
         private bool ItemExists(int id)
